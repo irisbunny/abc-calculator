@@ -71,7 +71,7 @@ def abc_calculator():
     with st.sidebar:
         st.header("⚙️ 计算设置")
         max_results = st.slider("需要的结果数量", 1, 10, 5, key='max_results')
-        max_attempts = st.number_input("最大尝试次数", 1000, 10000000, 500000, step=10000)
+        max_attempts = st.number_input("最大尝试次数", 1000, 10000000, 1000000, step=10000)
 
     # 主界面
     d_value = st.number_input("目标d值", min_value=0.1, value=None, step=0.1, format="%.1f")
@@ -111,17 +111,25 @@ def invoice_generator():
         # 设置文档默认字体（解决中文乱码）
         style = doc.styles['Normal']
         font = style.font
-        font.name = '微软雅黑'
+        font.name = '宋体'
         font.size = Pt(10.5)
         from docx.oxml.ns import qn
-        font._element.rPr.rFonts.set(qn('w:eastAsia'), '微软雅黑')
+        font._element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
         
         # 添加标题
         doc.add_paragraph('附件二 结算单', style='Heading 1')
         
         # 创建表格
-        table = doc.add_table(rows=7, cols=5)
+        table = doc.add_table(rows=6, cols=5)
         table.style = 'Table Grid'
+        #手动调整表格
+        table.autofit = False 
+        table.allow_autofit = False
+
+        from docx.shared import Cm
+
+# 方法3：自动适应内容
+table.autofit = True  # 根据内容自动调整
         
         # 填充表格内容
         def fill_cells(row, col, text, merge=False):
