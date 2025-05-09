@@ -61,7 +61,7 @@ if st.button("🚀 开始计算"):
             if not results:
                 st.error(f"未找到解 (尝试了 {total_attempts} 次)")
             else:
-                st.success(f"找到 {len(results)} 组解 (尝试 {total_attempts} 次 | 耗时 {compute_time:.2f}s)")
+                st.success(f"找到 {len(results)} 组解 | 耗时 {compute_time:.2f}s)")
                 
                 for i, sol in enumerate(results, 1):
                     with st.expander(f"组合 {i}", expanded=True):
