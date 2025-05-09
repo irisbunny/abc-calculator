@@ -13,6 +13,11 @@ st.markdown("""
     .stButton>button {background-color: #4a6bdf; color: white;}
     .result-box {background: white; border-radius: 10px; padding: 15px; margin: 10px 0;}
 </style>
+
+查找满足 **a × b × c ≈ d** 的组合，其中：
+- b ∈ [2000.0, 5000.0]（一位小数）
+- a, c ∈ [0.1, 5.0]（一位小数）
+- 计算结果向下取整到一位小数等于目标d值
 """, unsafe_allow_html=True)
 
 # 计算函数
