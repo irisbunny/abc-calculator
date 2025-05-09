@@ -105,68 +105,96 @@ def invoice_generator():
     st.title("📄 结算单生成系统")
     
     # 结算单模板生成函数
-    def generate_invoice(party_a, party_b, contract_date, start_date, end_date, a, b, c, d):
-        doc = Document()
-        
-        # 设置文档默认字体（解决中文乱码）
-        style = doc.styles['Normal']
-        font = style.font
-        font.name = '宋体'
-        font.size = Pt(10.5)
-        from docx.oxml.ns import qn
-        font._element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
-        
-        # 添加标题
-        doc.add_paragraph('附件二 结算单', style='Heading 1')
-        
-        # 创建表格
-        table = doc.add_table(rows=6, cols=5)
-        table.style = 'Table Grid'
-        #手动调整表格
-        table.autofit = False 
-        table.allow_autofit = False
+    from docx import Document
+from docx.shared import Pt
+from docx.oxml.ns import qn
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+from docx.shared import Inches
+from io import BytesIO
 
-        from docx.shared import Cm
+def generate_invoice(party_a, party_b, contract_date, start_date, end_date, a, b, c, d):
+    doc = Document()
 
-# 方法3：自动适应内容
-table.autofit = True  # 根据内容自动调整
-        
-        # 填充表格内容
-        def fill_cells(row, col, text, merge=False):
-            cells = table.rows[row].cells
-            cells[col].text = text
-            if merge:
-                cells[col].merge(cells[4])
-        
-        fill_cells(0, 0, "甲方")
-        fill_cells(0, 1, party_a, merge=True)
-        
-        fill_cells(1, 0, "乙方")
-        fill_cells(1, 1, party_b, merge=True)
-        
-        fill_cells(2, 0, "合作内容")
-        fill_cells(2, 1, f"根据甲乙双方于{contract_date}签署的《委托开发及运维服务外包协议》（简称：主协议），甲方为乙方提供如下技术服务，乙方支付费用。", merge=True)
-        
-        fill_cells(3, 0, "结算周期")
-        fill_cells(3, 1, f"{start_date}至{end_date}", merge=True)
-        
-        fill_cells(4, 0, "技术支持服务")
-        fill_cells(4, 1, "服务人次")
-        fill_cells(4, 2, "天单价")
-        fill_cells(4, 3, "人天数")
-        fill_cells(4, 4, "结算金额")
-        
-        fill_cells(5, 0, "人工成本")
-        fill_cells(5, 1, str(a))
-        fill_cells(5, 2, str(b))
-        fill_cells(5, 3, str(c))
-        fill_cells(5, 4, str(d))
-        
-        # 保存到内存
-        file_stream = BytesIO()
-        doc.save(file_stream)
-        file_stream.seek(0)
-        return file_stream
+    # 设置默认字体：宋体 10.5pt
+    style = doc.styles['Normal']
+    font = style.font
+    font.name = '宋体'
+    font.size = Pt(10.5)
+    font._element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
+
+    # 设置页面边距
+    section = doc.sections[0]
+    section.top_margin = Inches(2.61 / 2.54)
+    section.bottom_margin = Inches(2.08 / 2.54)
+    section.left_margin = Inches(3.00 / 2.54)
+    section.right_margin = Inches(2.75 / 2.54)
+
+    # 添加标题
+    title = doc.add_paragraph("附件二 结算单", style='Heading 1')
+    title_format = title.paragraph_format
+    title_format.space_before = Pt(2)
+    title_format.space_after = Pt(0)
+
+    # 添加表格（6行5列）
+    table = doc.add_table(rows=6, cols=5)
+    table.style = 'Table Grid'
+
+    # 设置列宽（单位EMU）
+    column_widths = [1617345, 810260, 899160, 899160, 989330]
+    for row in table.rows:
+        for i, width in enumerate(column_widths):
+            row.cells[i].width = width
+
+    # 单元格填充函数
+    def fill_cells(row, col, text, col_span=1):
+        cell = table.cell(row, col)
+        cell.text = text
+
+        para = cell.paragraphs[0]
+        run = para.runs[0]
+        run.font.name = '宋体'
+        run.font.size = Pt(10.5)
+        run._element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
+
+        para.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+        para.paragraph_format.space_before = Pt(2)
+        para.paragraph_format.space_after = Pt(0)
+
+        # 合并单元格（横向）
+        if col_span > 1:
+            cell.merge(table.cell(row, col + col_span - 1))
+
+    # 填充内容
+    fill_cells(0, 0, "甲方")
+    fill_cells(0, 1, party_a, col_span=4)
+
+    fill_cells(1, 0, "乙方")
+    fill_cells(1, 1, party_b, col_span=4)
+
+    fill_cells(2, 0, "合作内容")
+    fill_cells(2, 1, f"根据甲乙双方于{contract_date}签署的《委托开发及运维服务外包协议》（简称：主协议），甲方为乙方提供如下技术服务，乙方支付费用。", col_span=4)
+
+    fill_cells(3, 0, "结算周期")
+    fill_cells(3, 1, f"{start_date}至{end_date}", col_span=4)
+
+    fill_cells(4, 0, "技术支持服务")
+    fill_cells(4, 1, "服务人次")
+    fill_cells(4, 2, "天单价")
+    fill_cells(4, 3, "人天数")
+    fill_cells(4, 4, "结算金额")
+
+    fill_cells(5, 0, "人工成本")
+    fill_cells(5, 1, str(a))
+    fill_cells(5, 2, str(b))
+    fill_cells(5, 3, str(c))
+    fill_cells(5, 4, str(d))
+
+    # 导出为内存文件
+    file_stream = BytesIO()
+    doc.save(file_stream)
+    file_stream.seek(0)
+    return file_stream
+
 
     # 表单设计
     with st.form("invoice_form"):
