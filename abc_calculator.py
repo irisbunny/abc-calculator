@@ -23,7 +23,7 @@ def find_abc_combinations(d, max_results=5, max_attempts=10000000):
     while len(results) < max_results and attempt < max_attempts:
         b = round(random.uniform(2000, 5000), 1)
         a = round(random.uniform(1, 5), 1)
-        c = round(random.uniform(0.1, 5), 1)
+        c = round(random.uniform(0.5, 5), 1)
         
         d_candidate = a * b * c
         
