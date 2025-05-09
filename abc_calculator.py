@@ -5,7 +5,7 @@ from datetime import datetime
 
 # 设置页面标题和图标
 st.set_page_config(
-    page_title="ABC组合计算器",
+    page_title="组合计算器",
     page_icon="🧮",
     layout="centered"
 )
@@ -42,7 +42,7 @@ def find_abc_combinations(d, max_attempts=1000000):
     
     while attempts < max_attempts and len(results) < 10:
         b = round(random.uniform(2000, 5000), 1)
-        a = round(random.uniform(0.1, 5), 1)
+        a = round(random.uniform(1, 5), 1)
         c = round(random.uniform(0.1, 5), 1)
         
         d_candidate = a * b * c
@@ -59,7 +59,7 @@ def find_abc_combinations(d, max_attempts=1000000):
     return results
 
 # 网页界面
-st.title("🧮 ABC组合计算器")
+st.title("🧮 组合计算器")
 st.markdown("""
 查找满足 **a × b × c ≈ d** 的组合，其中：
 - b ∈ [2000.0, 5000.0]（一位小数）
