@@ -42,8 +42,8 @@ def find_abc_combinations(d, max_results=5, max_attempts=10000000):
 # 侧边栏设置
 with st.sidebar:
     st.header("⚙️ 计算设置")
-    max_results = st.slider("需要的结果数量", 1, 20, 5, key='max_results')
-    max_attempts = st.number_input("最大尝试次数", 1000, 10000000, 50000, step=1000)
+    max_results = st.slider("需要的结果数量", 1, 10, 5, key='max_results')
+    max_attempts = st.number_input("最大尝试次数", 1000, 10000000, 500000, step=10000)
 
 # 主界面
 st.title("🧮 Calculator")
