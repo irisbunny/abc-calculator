@@ -15,8 +15,9 @@ st.markdown("""
 </style>
 
 查找满足 **a × b × c ≈ d** 的组合，其中：
+- a ∈ [1, 5]（整数）
 - b ∈ [2000.0, 5000.0]（一位小数）
-- a, c ∈ [0.1, 5.0]（一位小数）
+- c ∈ [0.1, 5.0]（一位小数）
 - 计算结果向下取整到一位小数等于目标d值
 """, unsafe_allow_html=True)
 
@@ -27,8 +28,8 @@ def find_abc_combinations(d, max_results=5, max_attempts=10000000):
     
     while len(results) < max_results and attempt < max_attempts:
         b = round(random.uniform(2000, 5000), 1)
-        a = round(random.uniform(1, 5), 1)
-        c = round(random.uniform(0.5, 5), 1)
+        a = random.randint(1, 5)  # a改为整数
+        c = round(random.uniform(0.1, 5), 1)
         
         d_candidate = a * b * c
         
@@ -72,7 +73,7 @@ if st.button("🚀 开始计算"):
                     with st.expander(f"组合 {i}", expanded=True):
                         st.markdown(f"""
                         <div class="result-box">
-                            <p>🔢 <b>参数</b>: a={sol['a']:.1f}, b={sol['b']:.1f}, c={sol['c']:.1f}</p>
+                            <p>🔢 <b>参数</b>: a={sol['a']} (整数), b={sol['b']:.1f}, c={sol['c']:.1f}</p>
                             <p>🧮 <b>计算值</b>: {sol['d_val']:.4f}</p>
                             <p>⌛ <b>向下取整</b>: {sol['floor']}</p>
                         </div>
