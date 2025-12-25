@@ -49,7 +49,7 @@ def find_abc_combinations(d, max_results=5, max_attempts=10000000):
 with st.sidebar:
     st.header("⚙️ 计算设置")
     max_results = st.slider("需要的结果数量", 1, 10, 5, key='max_results')
-    max_attempts = st.number_input("最大尝试次数", 1000, 10000000, 500000, step=10000)
+    max_attempts = st.number_input("最大尝试次数", 1000, 10000000, 5000000, step=10000)
 
 # 主界面
 st.title("🧮 Calculator")
